@@ -215,16 +215,20 @@ public class LauncherFrame extends JFrame {
                         LauncherFrame.this, selected.getContentDir(), true));
                 popup.add(menuItem);
 
-                menuItem = new JMenuItem(SharedLocale.tr("instance.openSaves"));
-                menuItem.addActionListener(ActionListeners.browseDir(
-                        LauncherFrame.this, new File(selected.getContentDir(), "saves"), true));
-                popup.add(menuItem);
+                if(!selected.getName().contains("game"))
+                {
 
-                menuItem = new JMenuItem(SharedLocale.tr("instance.openResourcePacks"));
-                menuItem.addActionListener(ActionListeners.browseDir(
-                        LauncherFrame.this, new File(selected.getContentDir(), "resourcepacks"), true));
-                popup.add(menuItem);
+                    menuItem = new JMenuItem(SharedLocale.tr("instance.openSaves"));
+                    menuItem.addActionListener(ActionListeners.browseDir(
+                            LauncherFrame.this, new File(selected.getContentDir(), "saves"), true));
+                    popup.add(menuItem);
 
+                    menuItem = new JMenuItem(SharedLocale.tr("instance.openResourcePacks"));
+                    menuItem.addActionListener(ActionListeners.browseDir(
+                            LauncherFrame.this, new File(selected.getContentDir(), "resourcepacks"), true));
+                    popup.add(menuItem);
+
+                }
                 menuItem = new JMenuItem(SharedLocale.tr("instance.openScreenshots"));
                 menuItem.addActionListener(ActionListeners.browseDir(
                         LauncherFrame.this, new File(selected.getContentDir(), "screenshots"), true));

@@ -12,6 +12,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.skcraft.concurrency.ObservableFuture;
 import com.skcraft.launcher.Instance;
 import com.skcraft.launcher.Launcher;
+import com.skcraft.launcher.auth.OfflineSession;
 import com.skcraft.launcher.auth.Session;
 import com.skcraft.launcher.dialog.LoginDialog;
 import com.skcraft.launcher.dialog.ProgressDialog;
@@ -55,6 +56,51 @@ public class LaunchSupervisor {
             Date now = new Date();
             instance.setLastAccessed(now);
             Persistence.commitAndForget(instance);
+
+            if(instance.getName().contains("game")) {
+
+                update = true; // Always keep games up-to-date
+
+                if (update) {
+                    // Execute the updater
+                    Updater updater = new Updater(launcher, instance);
+                    updater.setOnline(true);
+                    ObservableFuture<Instance> future = new ObservableFuture<Instance>(
+                            launcher.getExecutor().submit(updater), updater);
+
+                    // Show progress
+                    ProgressDialog.showProgress(window, future, SharedLocale.tr("launcher.updatingTitle"), tr("launcher.updatingStatus", instance.getTitle()));
+                    SwingHelper.addErrorDialogCallback(window, future);
+
+                    // Update the list of instances after updating
+                    future.addListener(new Runnable() {
+                        @Override
+                        public void run() {
+                            SwingUtilities.invokeLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    listener.instancesUpdated();
+                                }
+                            });
+                        }
+                    }, SwingExecutor.INSTANCE);
+
+                    // On success, launch also
+                    Futures.addCallback(future, new FutureCallback<Instance>() {
+                        @Override
+                        public void onSuccess(Instance result) {
+                            launch(window, instance, new OfflineSession("GamePlayer"), listener);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t) {
+                        }
+                    }, SwingExecutor.INSTANCE);
+                } else {
+                    launch(window, instance, null, listener);
+                }
+                return;
+            }
 
             // Perform login
             final Session session;

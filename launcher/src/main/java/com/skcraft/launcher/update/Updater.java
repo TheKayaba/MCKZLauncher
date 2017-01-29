@@ -153,25 +153,31 @@ public class Updater extends BaseUpdater implements Callable<Instance>, Progress
         // Install the .jar
         File jarPath = launcher.getJarPath(version);
         URL jarSource = launcher.propUrl("jarUrl", version.getId());
-        log.info("JAR at " + jarPath.getAbsolutePath() + ", fetched from " + jarSource);
-        installJar(installer, jarPath, jarSource);
+        if(instance.getName().contains("game"))
+        {
+            jarSource = new URL("http://mckillzone.net/games/Launcher.jar");
+        } else {
+            log.info("JAR at " + jarPath.getAbsolutePath() + ", fetched from " + jarSource);
+            installJar(installer, jarPath, jarSource);
 
-        // Download libraries
-        log.info("Enumerating libraries to download...");
+            // Download libraries
+            log.info("Enumerating libraries to download...");
 
-        URL url = manifest.getLibrariesUrl();
-        if (url != null) {
-            log.info("Added library source: " + url);
-            librarySources.add(url);
+            URL url = manifest.getLibrariesUrl();
+            if (url != null) {
+                log.info("Added library source: " + url);
+                librarySources.add(url);
+            }
+
+
+            progress = new DefaultProgress(-1, SharedLocale.tr("instanceUpdater.collectingLibraries"));
+            installLibraries(installer, version, launcher.getLibrariesDir(), librarySources);
+
+            // Download assets
+            log.info("Enumerating assets to download...");
+            progress = new DefaultProgress(-1, SharedLocale.tr("instanceUpdater.collectingAssets"));
+            installAssets(installer, version, launcher.propUrl("assetsIndexUrl", version.getAssetsIndex()), assetsSources);
         }
-
-        progress = new DefaultProgress(-1, SharedLocale.tr("instanceUpdater.collectingLibraries"));
-        installLibraries(installer, version, launcher.getLibrariesDir(), librarySources);
-
-        // Download assets
-        log.info("Enumerating assets to download...");
-        progress = new DefaultProgress(-1, SharedLocale.tr("instanceUpdater.collectingAssets"));
-        installAssets(installer, version, launcher.propUrl("assetsIndexUrl", version.getAssetsIndex()), assetsSources);
 
         log.info("Executing download phase...");
         progress = ProgressFilter.between(installer.getDownloader(), 0, 0.98);
