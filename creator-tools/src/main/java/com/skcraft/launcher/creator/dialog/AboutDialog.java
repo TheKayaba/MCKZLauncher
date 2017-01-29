@@ -46,10 +46,9 @@ public class AboutDialog extends JDialog {
         JPanel container = new JPanel();
         container.setLayout(new MigLayout("insets dialog"));
 
-        container.add(new JLabel(SwingHelper.createIcon(Creator.class, "about_header.png")), "dock north");
         container.add(new JLabel("<html>Version " + version), "wrap");
         container.add(new JLabel("<html>Licensed under GNU Lesser General Public License, version 3."), "wrap, gapbottom unrel");
-        container.add(new JLabel("<html>Created by the SKCraft team. Visit our website!"), "wrap, gapbottom unrel");
+        container.add(new JLabel("<html>Created by the SKCraft & MCKillZone team. Visit our website!"), "wrap, gapbottom unrel");
 
         JButton okButton = new JButton("OK");
         JButton sourceCodeButton = new JButton("Source Code");
@@ -65,8 +64,8 @@ public class AboutDialog extends JDialog {
         getRootPane().registerKeyboardAction(e -> okButton.doClick(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         okButton.addActionListener(e -> dispose());
-        sourceCodeButton.addActionListener(e -> SwingHelper.openURL("https://github.com/SKCraft/Launcher", this));
-        skCraftButton.addActionListener(e -> SwingHelper.openURL("http://www.skcraft.com", this));
+        sourceCodeButton.addActionListener(e -> SwingHelper.openURL("https://github.com/TheKayaba/MCKZLauncher", this));
+        skCraftButton.addActionListener(e -> SwingHelper.openURL("http://www.mckillzone.net", this));
     }
 
     public static void showAboutDialog(Window parent) {

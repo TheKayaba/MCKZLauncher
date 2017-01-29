@@ -44,8 +44,6 @@ public class WelcomeDialog extends JFrame {
         JPanel container = new JPanel();
         container.setLayout(new MigLayout("insets 50 20"));
 
-        container.add(new JLabel(SwingHelper.createIcon(Creator.class, "welcome_logo.png")), "wrap, gap 20 20, gapbottom 30");
-
         container.add(newButton, "grow, gap 50 50, wrap");
         container.add(openButton, "grow, gap 50 50, wrap");
 
